@@ -25,7 +25,7 @@ def display_info(course, question):
     output = f"{course['title']}"
 
     if "prerequisite" in question or "requirement" in question:
-        prereq = course.get("prerequisites", "Not listed")
+        prereq = course["prerequisites"]
         output += f"\n Prerequisites: {prereq}"
 
     elif "semester" in question or "offered" in question or "when" in question:
@@ -35,17 +35,18 @@ def display_info(course, question):
     else:
         # This the default if no key word is hit
         output += f"\n  Description: {course['description']}"
+
+    print(output)
 ##############################
 
-def ask_question(question: str, k = 2):
+def ask_question(question: str, k = 1):
     vector = model.encode(question)
     _, indices = index.search(np.array([vector]), k)
     print('Top 3 courses: \n')
     for i in indices[0]:
-        print(f"{courses[i]['title']}")
-        print("\n")
-        print(f"{courses[i]['description']}\n")
+       course = courses[i]
+       display_info(course, question)
 
-
-
-ask_question("Give me computer science courses")
+    
+asking = input("Ask a question about courses: ")
+ask_question(asking)
