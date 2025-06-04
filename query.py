@@ -65,7 +65,7 @@ def ask_question(question: str, k = 1):
     print('Top 3 courses: \n')
     courseList = [courses[i] for i in indices[0]]
     advice = askChat(question, courseList)
-    print(advice)
+    print("\n" + advice)
     
-asking = input("Ask a question about courses: ")
+asking = input("Ask a question about courses: \n")
 ask_question(asking)
