@@ -9,7 +9,7 @@ MAIN_URL = f"{BASE_URL}/courses/"
 OUTPUT_PATH = "data/courses.json"
 
 def get_main_courses():
-    response = requests.get(COURSES_URL)
+    response = requests.get(MAIN_URL)
     soup = BeautifulSoup(response.text, "html.parser")
     courses = []
 
@@ -19,7 +19,7 @@ def get_main_courses():
             continue
         course_code = col[0]
         title_cell = col[1]
-        linkToCoursePage = course_code.find_all("a")
+        linkToCoursePage = course_code.find("a")
 
         if not linkToCoursePage or "href" not in linkToCoursePage.attrs:
             continue
@@ -30,7 +30,7 @@ def get_main_courses():
             "url": linkToCoursePage["href"]
         }
 
-    courses.append(courseHM)
+        courses.append(courseHM)
 
     return courses
 
@@ -38,8 +38,8 @@ def get_table_value(label, soup):
     for row in soup.find_all("tr"):
         col = row.find_all("td")
 
-    if len(col) >=2 and label in col[0]:
-        return col[1].text.strip()
+        if len(col) >=2 and label in col[0]:
+            return col[1].text.strip()
     
     else: return "N/A"
 
@@ -47,6 +47,7 @@ def get_table_value(label, soup):
 def getDescription(soup):
     for paragraphs in soup.find_all("p"):
         text = paragraphs.text.strip()
+
         if len(text) > 50:
             return text
 
