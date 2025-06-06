@@ -4,7 +4,10 @@ import faiss
 import numpy as np
 import subprocess
 import openai
+import os
 
+
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 openai.api_key = ""
 with open('data/courses.json', 'r') as f:
     courses = json.load(f)
@@ -62,7 +65,7 @@ def display_info(course, question):
 def ask_question(question: str, k = 1):
     vector = model.encode(question)
     _, indices = index.search(np.array([vector]), k)
-    print('Top 3 courses: \n')
+    print("\n" +'AI Advisor Advice (Triple A)' + "\n")
     courseList = [courses[i] for i in indices[0]]
     advice = askChat(question, courseList)
     print("\n" + advice)

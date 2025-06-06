@@ -8,7 +8,7 @@ with open('data/courses.json', 'r') as f:
     courses = json.load(f)
 print("Loading embedding model...")
 model = SentenceTransformer('all-MiniLM-L6-v2')
-texts = [f"{c['title']}: {c['description']}" for c in courses]
+texts = [f"{c['course code']} - {c['title']}: {c['description']} Instructor: {c['instructor']}" for c in courses]
 
 embeddings = model.encode(texts)
 print("Creating embeddings...")
