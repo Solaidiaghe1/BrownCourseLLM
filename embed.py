@@ -8,7 +8,7 @@ with open('data/courses.json', 'r') as f:
     courses = json.load(f)
 print("Loading embedding model...")
 model = SentenceTransformer('all-MiniLM-L6-v2')
-texts = [f"{c['course code']} - {c['title']}: {c['description']} Instructor: {c['instructor']}" for c in courses]
+texts = [f"{c['code']} - {c['title']}: {c['description']} Instructor: {c['instructor']}" for c in courses]
 
 embeddings = model.encode(texts)
 print("Creating embeddings...")
@@ -22,4 +22,4 @@ faiss.write_index(index, 'data/course_index.faiss')
 print("Saving metadata...")
 with open('data/course_index.json', 'w') as f: 
     json.dump(courses, f)
-print("✅ Done! All files saved.")
+print("All files saved.")

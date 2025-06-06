@@ -9,6 +9,7 @@ import os
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 openai.api_key = ""
+
 with open('data/courses.json', 'r') as f:
     courses = json.load(f)
 
@@ -20,14 +21,17 @@ if len(course_embeddings) != len(courses):
     subprocess.run(["python", "embed.py"])
     print("Reembedding done.")
 
-
 index = faiss.read_index('data/course_index.faiss')
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-def askChat(question, course):
-    prompt = f"""You're an academic advisor at Brown. Use the course data below to recommend helpful courses. Be smart, kind, and specific.
+def askChat(question, courses_list):
+    course_info = "\n\n".join(
+        [f"Course Code: {c.get('code', 'N/A')}\nTitle: {c.get('title', 'N/A')}\nDescription: {c.get('description', 'N/A')}" 
+         for c in courses_list]
+    )
+    prompt = f"""You're an academic advisor at Brown University. Use the course data below to recommend helpful courses. Be smart, kind, and specific.
     COURSES :
-    {json.dumps(course, indent=2)}
+    {course_info}
 
     QUESTION:
     {question} 
@@ -42,7 +46,6 @@ def askChat(question, course):
     )
     return response['choices'][0]['message']['content']
 
-#This is not working yet becuase keys are not in the data set
 def display_info(course, question):
     question = question.lower()
     output = f"{course['title']}"
@@ -56,16 +59,14 @@ def display_info(course, question):
         output += f"\n Offered: {sem}"
 
     else:
-        # This the default if no key word is hit
         output += f"\n  Description: {course['description']}"
 
     print(output)
-##############################
 
-def ask_question(question: str, k = 1):
+def ask_question(question: str, k = 3):
     vector = model.encode(question)
     _, indices = index.search(np.array([vector]), k)
-    print("\n" +'AI Advisor Advice (Triple A)' + "\n")
+    print("\n" + 'CSBrownie is thinking of advice...' + "\n")
     courseList = [courses[i] for i in indices[0]]
     advice = askChat(question, courseList)
     print("\n" + advice)
